@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     # profile_image = Base64ImageField(required=False)
     # profile_image_url = serializers.SerializerMethodField()
+    old_password = serializers.CharField(write_only=True, required=False)
 
     # def get_profile_image_url(self, obj):
     #     if obj != None and obj.profile_image != None:
@@ -51,26 +52,24 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        """_summary_
-
-        Args:
-            instance (_type_): _description_
-            validated_data (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         password = validated_data.pop('password', None)
         old_password = validated_data.pop('old_password', None)
 
         if password is not None and not instance.check_password(old_password):
-            return Response({'detail': 'Senha inválida'}, status=status.HTTP_400_BAD_REQUEST)
+            import ipdb
+            ipdb.set_trace()
+            raise serializers.ValidationError({'detail': 'Senha inválida'})
 
+        # Update other fields
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+
+        # Update password if provided
         if password is not None:
             instance.set_password(password)
 
-        new_instance = super().update(instance, validated_data)
-        return new_instance
+        instance.save()
+        return instance
 
     class Meta:
         model = User
