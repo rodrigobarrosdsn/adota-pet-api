@@ -1,10 +1,13 @@
-from urllib import request
+"""_summary_
+
+    Raises:
+        ValueError: _description_
+
+    Returns:
+        _type_: _description_
+"""
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.utils import timezone
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -76,7 +79,6 @@ class User(AbstractBaseUser):
     cpf = models.CharField(max_length=11, null=True, blank=True, unique=True)
     genero = models.CharField(
         max_length=9, choices=genero_choices, null=True, blank=True)
-    # profile_image = models.ImageField(null=True, blank=True)
     data_nascimento = models.DateField(null=True, blank=True)
     celular = models.CharField(max_length=13, null=True, blank=True)
     cep = models.CharField(max_length=9, null=True, blank=True)
@@ -155,6 +157,11 @@ class User(AbstractBaseUser):
 
 
 class BaseModel(models.Model):
+    """
+    BaseModel
+    contains common fields for all models
+
+    """
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -162,13 +169,23 @@ class BaseModel(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     class Meta:
+        """_summary_
+        """
         abstract = True
 
 
 class Animal(BaseModel):
+    """_summary_
+
+    Args:
+        BaseModel (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     especie_choices = (('Cachorro', 'Cachorro'), ('Gato', 'Gato'))
     idade_choices = (('Filhote', 'Filhote'), ('Adulto', 'Adulto'), ('Idoso', 'Idoso'))
-    porte_choices = (('Pequeno', 'Pequeno'), ('Médio', 'Médio'), ('Grande', 'Grande'))
+    porte_choices = (('Pequeno', 'Pequeno'), ('Medio', 'Medio'), ('Grande', 'Grande'))
 
     name = models.CharField(null=True, blank=True, max_length=30)
     apelido = models.CharField(null=True, blank=True, max_length=30)
@@ -182,6 +199,7 @@ class Animal(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
+        """_summary_"""
         verbose_name = 'Animal'
         verbose_name_plural = 'Animais'
         ordering = ['id']

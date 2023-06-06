@@ -1,19 +1,17 @@
-from django.conf.urls import include
+"""
+Module-level docstring providing a brief description of the module.
+"""
 from django.urls import path
-from rest_framework.routers import DefaultRouter
-from .views import *
-from .views_admin import *
+from .views import CustomAuthToken, UserViewSetMixin, AnimalViewSetMixin
+
 
 urlpatterns = [
-
-    # # contato
-    # path('create-contact/', create_contact),
-
-    # # user
-    path('user/create', create_user),
-    # path('update-user/', update_user),
     path('auth/', CustomAuthToken.as_view()),
     path('user/', UserViewSetMixin.as_view({'get': 'list', 'post': 'create'})),
-    path('user/<int:pk>/', UserViewSetMixin.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
-
+    path('user/<int:pk>/', UserViewSetMixin.as_view(
+        {'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+    path('animal/', AnimalViewSetMixin.as_view(
+        {'get': 'list', 'post': 'create'})),
+    path('animal/<int:pk>/', AnimalViewSetMixin.as_view(
+        {'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
 ]

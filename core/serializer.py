@@ -1,37 +1,54 @@
-from dataclasses import field
+"""_summary_
+
+Raises:
+    serializers.ValidationError: _description_
+    serializers.ValidationError: _description_
+
+Returns:
+    _type_: _description_
+"""
 from rest_framework import serializers
-from .models import *
-# from drf_base64.fields import Base64ImageField, Base64FileField
-from django.db.models import Sum
-from rest_framework.response import Response
-from ast import literal_eval
-import base64
-from adotapet.settings import *
-from django.core.files.base import ContentFile
-from django.db.models import Q
-from django.db.models import Avg, Sum, Count, Min, Max
-import re
-from rest_framework import viewsets, status
-# from drf_base64.fields import Base64ImageField, Base64FileField
+from .models import Animal, User
+# pylint: disable=W0237
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """_summary_
+    """
+    Serializer for the User model.
 
     Args:
-        serializers (_type_): _description_
+        serializers.ModelSerializer: The base model serializer class.
 
     Returns:
-        _type_: _description_
-    """
-    # profile_image = Base64ImageField(required=False)
-    # profile_image_url = serializers.SerializerMethodField()
-    old_password = serializers.CharField(write_only=True, required=False)
+        dict: The validated user data.
 
-    # def get_profile_image_url(self, obj):
-    #     if obj != None and obj.profile_image != None:
-    #         return BASE_URL + MEDIA_URL + obj.profile_image.name
-    #     return None
+    Attributes:
+        old_password (serializers.CharField): A write-only field for the old password.
+        email (serializers.EmailField): A required email field.
+    """
+
+    old_password = serializers.CharField(write_only=True, required=False)
+    email = serializers.EmailField(required=True)
+    # cpf = serializers.CharField(required=True)
+
+    def validate(self, data):
+        """
+        Validate the creation of a user.
+
+        Args:
+            data (dict): The user data to validate.
+
+        Returns:
+            dict: The validated user data.
+
+        Raises:
+            serializers.ValidationError: If any required field is missing.
+        """
+        for field in self.fields:
+            if self.fields[field].required and field not in data:
+                raise serializers.ValidationError(f"{field} field is required.")
+
+        return data
 
     def create(self, validated_data):
         """_summary_
@@ -56,8 +73,6 @@ class UserSerializer(serializers.ModelSerializer):
         old_password = validated_data.pop('old_password', None)
 
         if password is not None and not instance.check_password(old_password):
-            import ipdb
-            ipdb.set_trace()
             raise serializers.ValidationError({'detail': 'Senha inválida'})
 
         # Update other fields
@@ -72,8 +87,39 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
+        """_summary_
+        """
         model = User
         fields = '__all__'
         extra_kwargs = {'password': {'write_only': True},
                         'old_password': {'write_only': True}}
         read_only_fields = ('id',)
+
+
+class AnimalSerializer(serializers.ModelSerializer):
+    """
+    _summary_
+    """
+
+    user_obj = serializers.SerializerMethodField()
+
+    def get_user_obj(self, obj):
+        """
+        _summary_
+
+        Args:
+            obj (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        if obj.user:
+            return UserSerializer(obj.user).data
+        return None
+
+    class Meta:
+        """
+        _summary_
+        """
+        model = Animal
+        fields = '__all__'
