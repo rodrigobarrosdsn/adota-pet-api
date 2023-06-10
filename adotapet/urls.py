@@ -22,6 +22,6 @@ from django.conf import settings
 from django.views.static import serve
 
 urlpatterns = [
-    path('core/', include(core_urls)),
+    path('core/v1/', include(core_urls)),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
