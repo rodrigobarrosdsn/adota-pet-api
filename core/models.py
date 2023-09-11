@@ -186,6 +186,7 @@ class Animal(BaseModel):
     especie_choices = (('Cachorro', 'Cachorro'), ('Gato', 'Gato'))
     idade_choices = (('Filhote', 'Filhote'), ('Adulto', 'Adulto'), ('Idoso', 'Idoso'))
     porte_choices = (('Pequeno', 'Pequeno'), ('Medio', 'Medio'), ('Grande', 'Grande'))
+    sexo_choices = (('Macho', 'Macho'), ('Femea', 'Femea'))
 
     name = models.CharField(null=True, blank=True, max_length=30)
     apelido = models.CharField(null=True, blank=True, max_length=30)
@@ -195,6 +196,7 @@ class Animal(BaseModel):
     castrado = models.BooleanField(default=False)
     descricao = models.TextField()
     disponivel = models.BooleanField(default=True)
+    sexo = models.CharField(null=True, blank=True, max_length=10, choices=sexo_choices)
     contato = models.CharField(null=True, blank=True, max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
