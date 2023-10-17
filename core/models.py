@@ -92,6 +92,7 @@ class User(AbstractBaseUser):
         max_length=255, null=True, blank=True)
     forgot_password_expire = models.DateTimeField(null=True, blank=True)
 
+    imagem_perfil = models.ImageField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -199,6 +200,9 @@ class Animal(BaseModel):
     sexo = models.CharField(null=True, blank=True, max_length=10, choices=sexo_choices)
     contato = models.CharField(null=True, blank=True, max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    imagem_perfil = models.ImageField(null=True, blank=True)
+    imagem_detalhe = models.ImageField(null=True, blank=True)
+    imagem_capa = models.ImageField(null=True, blank=True)
 
     class Meta:
         """_summary_"""

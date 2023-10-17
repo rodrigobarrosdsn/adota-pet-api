@@ -9,6 +9,7 @@ Returns:
 """
 from rest_framework import serializers
 from .models import Animal, User
+from drf_base64.fields import Base64ImageField
 # pylint: disable=W0237
 
 
@@ -29,26 +30,27 @@ class UserSerializer(serializers.ModelSerializer):
 
     old_password = serializers.CharField(write_only=True, required=False)
     email = serializers.EmailField(required=True)
+    imagem_perfil = Base64ImageField(required=False)
     # cpf = serializers.CharField(required=True)
 
-    def validate(self, data):
-        """
-        Validate the creation of a user.
+    # def validate(self, data):
+    #     """
+    #     Validate the creation of a user.
 
-        Args:
-            data (dict): The user data to validate.
+    #     Args:
+    #         data (dict): The user data to validate.
 
-        Returns:
-            dict: The validated user data.
+    #     Returns:
+    #         dict: The validated user data.
 
-        Raises:
-            serializers.ValidationError: If any required field is missing.
-        """
-        for field in self.fields:
-            if self.fields[field].required and field not in data:
-                raise serializers.ValidationError(f"{field} field is required.")
+    #     Raises:
+    #         serializers.ValidationError: If any required field is missing.
+    #     """
+    #     for field in self.fields:
+    #         if self.fields[field].required and field not in data:
+    #             raise serializers.ValidationError(f"{field} field is required.")
 
-        return data
+    #     return data
 
     def create(self, validated_data):
         """_summary_
@@ -102,6 +104,9 @@ class AnimalSerializer(serializers.ModelSerializer):
     """
 
     user_obj = serializers.SerializerMethodField()
+    imagem_perfil = Base64ImageField(required=False)
+    imagem_detalhe = Base64ImageField(required=False)
+    imagem_capa = Base64ImageField(required=False)
 
     def get_user_obj(self, obj):
         """
