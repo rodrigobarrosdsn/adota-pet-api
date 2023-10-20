@@ -7,7 +7,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from .models import Animal, User
-from .serializer import AnimalSerializer, UserSerializer
+from .serializer import AnimalSerializer, UserSerializer, UserAnimalSerializer
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 
@@ -67,8 +67,13 @@ class UserViewSetMixin(
         if self.action == 'create':
             permission_classes = [AllowAny]
         else:
-            permission_classes = [IsAuthenticatedOrReadOnly]
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=['GET'])
+    def get_me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
 
 class AnimalFilter(filters.FilterSet):
@@ -122,7 +127,7 @@ class AnimalViewSetMixin(
         # Aplicar paginação
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = UserAnimalSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)

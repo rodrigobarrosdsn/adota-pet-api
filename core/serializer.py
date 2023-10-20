@@ -128,3 +128,10 @@ class AnimalSerializer(serializers.ModelSerializer):
         """
         model = Animal
         fields = '__all__'
+
+
+class UserAnimalSerializer(serializers.ModelSerializer):
+    # Defina os campos desejados para o serializer aqui
+    class Meta:
+        model = Animal
+        fields = '__all__'

@@ -33,6 +33,8 @@ urlpatterns = [
     path('animal/<int:pk>/', AnimalViewSetMixin.as_view(
         {'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
     path('user/animals/', AnimalViewSetMixin.as_view({'get': 'user_animal'}), name='user_animal'),
+    path('user/get_me/', UserViewSetMixin.as_view({'get': 'get_me'}), name='get_me'),
+
 
 ]
 
