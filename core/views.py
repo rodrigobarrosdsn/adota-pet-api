@@ -4,10 +4,13 @@ from rest_framework import filters as drf_filters
 from rest_framework import mixins, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from .models import Animal, User
 from .serializer import AnimalSerializer, UserSerializer
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+
 # pylint: disable=E1101
 # pylint: disable=W0621
 
@@ -84,6 +87,11 @@ class AnimalFilter(filters.FilterSet):
         fields = ['apelido', 'idade', 'porte', 'nome', 'is_active']
 
 
+class AnimalPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class AnimalViewSetMixin(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -98,10 +106,24 @@ class AnimalViewSetMixin(
     serializer_class = AnimalSerializer
     filter_backends = [filters.DjangoFilterBackend, drf_filters.SearchFilter]
     filterset_class = AnimalFilter
+    pagination_class = AnimalPagination
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'list':
             permission_classes = [AllowAny]
         else:
-            permission_classes = [IsAuthenticatedOrReadOnly]
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=['GET'])
+    def user_animal(self, request, user_id=None):
+        queryset = self.queryset.filter(user_id=request.user)
+
+        # Aplicar paginação
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
