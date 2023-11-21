@@ -40,7 +40,8 @@ class UserFilter(filters.FilterSet):
     """
     email = filters.CharFilter(field_name='email', lookup_expr='exact')
     nome = filters.CharFilter(field_name='nome', lookup_expr='icontains')
-    is_active = filters.BooleanFilter(field_name='is_active', lookup_expr='exact')
+    is_active = filters.BooleanFilter(
+        field_name='is_active', lookup_expr='exact')
 
     class Meta:
         """_summary_
@@ -82,20 +83,23 @@ class AnimalFilter(filters.FilterSet):
     idade = filters.CharFilter(field_name='idade', lookup_expr='icontains')
     porte = filters.CharFilter(field_name='porte', lookup_expr='icontains')
     nome = filters.CharFilter(field_name='nome', lookup_expr='icontains')
-    is_active = filters.BooleanFilter(field_name='is_active', lookup_expr='exact')
+    especie = filters.CharFilter(field_name='especie', lookup_expr='icontains')
+    is_active = filters.BooleanFilter(
+        field_name='is_active', lookup_expr='exact')
 
     class Meta:
         """
         _summary_
         """
         model = Animal
-        fields = ['apelido', 'idade', 'porte', 'nome', 'is_active']
+        fields = ['apelido', 'idade', 'porte', 'nome', 'especie', 'is_active']
 
 
 class AnimalPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
+
 
 class AnimalViewSetMixin(
     mixins.ListModelMixin,
